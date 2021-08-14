@@ -19,7 +19,33 @@
 				"command": "frc-web-components.helloWorld",
 				"title": "Hello World"
 			}
-		]
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "frc-web-components",
+					"title": "FRC Web Components",
+					"icon": "resources/wpilib.svg"
+				}
+			]
+		},
+		"views": {
+			"frc-web-components": [
+				{
+					"id": "frc-web-components-dashboard",
+					"name": "Dashboard",
+					"description": "View to create a new dashboard project, start and stop an opened project, and install extensions"
+				},
+				{
+					"id": "frc-web-components-templates",
+					"name": "Templates"
+				},
+				{
+					"id": "frc-web-components-custom-components",
+					"name": "Custom Components"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",
