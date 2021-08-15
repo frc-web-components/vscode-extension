@@ -1,17 +1,17 @@
 import * as vscode from 'vscode';
+import Webview from './Webview';
 
 export function activate(context: vscode.ExtensionContext) {
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('frc-web-components.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from FRC Web Components!');
-	});
+	const webview = new Webview(context.extensionUri);
 
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(vscode.commands.registerCommand('frc-web-components.helloWorld', () => {
+		vscode.window.showInformationMessage('Hello World from FRC Web Components!');
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('frc-web-components.showWebview', () => {
+		webview.open();
+	}));
 }
 
 export function deactivate() { }

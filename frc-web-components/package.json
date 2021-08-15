@@ -10,7 +10,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:frc-web-components.helloWorld"
+		"onCommand:frc-web-components.helloWorld",
+		"onCommand:frc-web-components.showWebview"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
@@ -18,6 +19,10 @@
 			{
 				"command": "frc-web-components.helloWorld",
 				"title": "Hello World"
+			},
+			{
+				"command": "frc-web-components.showWebview",
+				"title": "Show Webview"
 			}
 		],
 		"viewsContainers": {
@@ -73,5 +78,8 @@
 		"ts-loader": "^9.2.2",
 		"webpack": "^5.38.1",
 		"webpack-cli": "^4.7.0"
+	},
+	"dependencies": {
+		"lit": "^2.0.0-rc.2"
 	}
 }
