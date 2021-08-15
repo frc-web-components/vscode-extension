@@ -1,7 +1,5 @@
 import { html, render } from "lit";
 
-
-
 const template = () => html`
     <p>Hello world!</p>
 `;
