@@ -21,7 +21,7 @@ export default class Webview {
             vscode.ViewColumn.One,
             {
                 enableScripts: true,
-                localResourceRoots: [vscode.Uri.joinPath(this._extensionUri, "src/webviews")]
+                localResourceRoots: [vscode.Uri.joinPath(this._extensionUri, "webviews/lib")]
             }
         );
 
@@ -58,7 +58,7 @@ export default class Webview {
     private getWebviewContent(): string {
 
         const appUrl = this._panel?.webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, "src/webviews/pages", "app.js")
+            vscode.Uri.joinPath(this._extensionUri, "webviews/lib", "app.js")
         );
 
 
