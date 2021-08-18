@@ -10,6 +10,8 @@ export default class CustomWebviewView implements vscode.WebviewViewProvider {
     }
 
     public resolveWebviewView(webviewView: vscode.WebviewView) {
+        webviewView.webview.options = this._customWebview.getOptions();
         this._customWebview.setWebview(webviewView.webview);
+        
     }
 }

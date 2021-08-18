@@ -40,6 +40,13 @@ export default class CustomWebview {
         return this._webview;
     }
 
+    public getOptions() {
+        return {
+            enableScripts: true,
+            localResourceRoots: [vscode.Uri.joinPath(this.getExtensionUri(), "webviews/lib")]
+        };
+    }
+
     private getWebviewContent(): string {
 
         const appUrl = this._webview?.asWebviewUri(

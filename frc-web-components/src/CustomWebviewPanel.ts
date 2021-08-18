@@ -20,10 +20,7 @@ export default class CustomWebviewPanel {
             this.viewType,
             this.title,
             vscode.ViewColumn.One,
-            {
-                enableScripts: true,
-                localResourceRoots: [vscode.Uri.joinPath(this._customWebview.getExtensionUri(), "webviews/lib")]
-            }
+            this._customWebview.getOptions()
         );
 
         this._customWebview.setWebview(this._panel.webview);
