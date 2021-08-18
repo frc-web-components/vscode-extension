@@ -40,8 +40,15 @@
 		"views": {
 			"frc-web-components": [
 				{
+					"id": "frc-web-components-no-project-opened",
+					"name": "No Project Opened",
+					"when": "!frcWebComponents.isProjectOpened",
+					"type": "webview"
+				},
+				{
 					"id": "frc-web-components-dashboard",
 					"name": "Dashboard",
+					"when": "",
 					"description": "View to create a new dashboard project, start and stop an opened project, and install extensions"
 				},
 				{

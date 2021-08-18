@@ -1,35 +1,25 @@
 import * as vscode from "vscode";
 
-export default class Webview {
-    public readonly viewType: string;
-    public readonly title: string;
-
+export default class CustomWebview {
     private readonly _extensionUri: vscode.Uri;
+    private _webview: vscode.Webview | null = null;
+
     private _panel: vscode.WebviewPanel | null = null;
     private _disposables: vscode.Disposable[] = [];
 
-    constructor(extensionUri: vscode.Uri, viewType: string = 'view', title: string = 'View') {
+    constructor(extensionUri: vscode.Uri) {
         this._extensionUri = extensionUri;
-        this.viewType = viewType;
-        this.title = title;
     }
 
-    private _create(): void {
-        this._panel = vscode.window.createWebviewPanel(
-            this.viewType,
-            this.title,
-            vscode.ViewColumn.One,
-            {
-                enableScripts: true,
-                localResourceRoots: [vscode.Uri.joinPath(this._extensionUri, "webviews/lib")]
-            }
-        );
+    public getExtensionUri(): vscode.Uri {
+        return this._extensionUri;
+    }
 
-        this._panel.webview.html = this.getWebviewContent();
-
-        this._panel.onDidDispose(() => this.close(), null, this._disposables);
-
-        this._panel.webview.onDidReceiveMessage(
+    public setWebview(webview: vscode.Webview) {
+        this.dispose();
+        this._webview = webview;
+        this._webview.html = this.getWebviewContent();
+        this._webview.onDidReceiveMessage(
             message => {
                 switch (message) {
 
@@ -40,27 +30,21 @@ export default class Webview {
         );
     }
 
-    public open(): void {
-        if (!this._panel) {
-            this._create();
-        } else {
-            this._panel.reveal();
-        }
-    }
-
-    public close(): void {
-        this._panel?.dispose();
-        this._panel = null;
+    public dispose(): void {
+        this._webview = null;
         this._disposables.forEach(disposable => disposable.dispose());
         this._disposables = [];
     }
 
+    public getWebview(): vscode.Webview | null {
+        return this._webview;
+    }
+
     private getWebviewContent(): string {
 
-        const appUrl = this._panel?.webview.asWebviewUri(
+        const appUrl = this._webview?.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, "webviews/lib", "app.js")
         );
-
 
         return `
             <!DOCTYPE html>
@@ -71,7 +55,7 @@ export default class Webview {
                 <title>Config View</title>
                 <meta 
                     http-equiv="Content-Security-Policy"
-                    content="default-src 'none'; img-src https:; script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:; style-src vscode-resource: 'unsafe-inline';"
+                    content="default-src 'none'; img-src https:; script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:; style-src ${this._panel?.webview.cspSource} 'unsafe-inline';"
                 >
                 <script>
                     window.acquireVsCodeApi = acquireVsCodeApi;
