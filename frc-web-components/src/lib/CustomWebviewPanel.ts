@@ -9,7 +9,7 @@ export default class CustomWebviewPanel {
     private _panel: vscode.WebviewPanel | null = null;
     private _disposables: vscode.Disposable[] = [];
 
-    constructor(customWebview: CustomWebview, viewType: string = 'view', title: string = 'View') {
+    public constructor(customWebview: CustomWebview, viewType: string = 'view', title: string = 'View') {
         this._customWebview = customWebview;
         this.viewType = viewType;
         this.title = title;

@@ -40,9 +40,9 @@
 		"views": {
 			"frc-web-components": [
 				{
-					"id": "frc-web-components-no-project-opened",
-					"name": "No Project Opened",
-					"when": "!frcWebComponents.isProjectOpened",
+					"id": "frc-web-components-no-dashboard-opened",
+					"name": "No Dashboard Opened",
+					"when": "!frcWebComponents.isDashboardOpened",
 					"type": "webview"
 				},
 				{

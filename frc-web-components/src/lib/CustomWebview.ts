@@ -1,13 +1,16 @@
 import * as vscode from "vscode";
 
-export default class CustomWebview {
+export default abstract class CustomWebview {
+
+    public readonly abstract scriptName : string;
+
     private readonly _extensionUri: vscode.Uri;
     private _webview: vscode.Webview | null = null;
 
     private _panel: vscode.WebviewPanel | null = null;
     private _disposables: vscode.Disposable[] = [];
 
-    constructor(extensionUri: vscode.Uri) {
+    public constructor(extensionUri: vscode.Uri) {
         this._extensionUri = extensionUri;
     }
 
@@ -21,14 +24,14 @@ export default class CustomWebview {
         this._webview.html = this.getWebviewContent();
         this._webview.onDidReceiveMessage(
             message => {
-                switch (message) {
-
-                }
+                return this.onDidReceiveMessage(message);
             },
             undefined,
             this._disposables
         );
     }
+
+    protected abstract onDidReceiveMessage(message : any) : any;
 
     public dispose(): void {
         this._webview = null;
@@ -43,14 +46,14 @@ export default class CustomWebview {
     public getOptions() {
         return {
             enableScripts: true,
-            localResourceRoots: [vscode.Uri.joinPath(this.getExtensionUri(), "webviews/lib")]
+            localResourceRoots: [vscode.Uri.joinPath(this.getExtensionUri(), "webviews/dist")]
         };
     }
 
     private getWebviewContent(): string {
 
-        const appUrl = this._webview?.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, "webviews/lib", "app.js")
+        const scriptUrl = this._webview?.asWebviewUri(
+            vscode.Uri.joinPath(this._extensionUri, "webviews/dist", this.scriptName)
         );
 
         return `
@@ -70,7 +73,7 @@ export default class CustomWebview {
             </head>
             <body>
                 <div id="root"></div>
-                <script type="module" src="${appUrl}"></script>
+                <script type="module" src="${scriptUrl}"></script>
             </body>
             </html>
         `;

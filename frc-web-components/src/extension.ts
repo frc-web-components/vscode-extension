@@ -1,24 +1,23 @@
 import * as vscode from 'vscode';
-import CustomWebview from './CustomWebview';
-import CustomWebviewPanel from './CustomWebviewPanel';
-import CustomWebviewView from './CustomWebviewView';
-
+import CustomWebviewPanel from './lib/CustomWebviewPanel';
+import CustomWebviewView from './lib/CustomWebviewView';
+import NoDashboardOpenedWebview from './webviews/NoDashboardOpenedWebview';
 
 
 export function activate(context: vscode.ExtensionContext) {
 
-	const webview = new CustomWebview(context.extensionUri);
-	const webviewPanel = new CustomWebviewPanel(webview);
-	const webviewView = new CustomWebviewView(webview);
+	const noDashboardWebview = new NoDashboardOpenedWebview(context.extensionUri);
+	const webviewPanel = new CustomWebviewPanel(noDashboardWebview);
+	const webviewView = new CustomWebviewView(noDashboardWebview);
 
-	let isProjectOpened: boolean;
+	let isDashboardOpened: boolean;
 
-	const setProjectOpened = (opened: boolean) => {
-		isProjectOpened = opened;
-		vscode.commands.executeCommand('setContext', 'frcWebComponents.isProjectOpened', opened);
+	const setDashboardOpened = (opened: boolean) => {
+		isDashboardOpened = opened;
+		vscode.commands.executeCommand('setContext', 'frcWebComponents.isDashboardOpened', opened);
 	};
 
-	setProjectOpened(false);
+	setDashboardOpened(false);
 
 	context.subscriptions.push(vscode.commands.registerCommand('frc-web-components.helloWorld', () => {
 		vscode.window.showInformationMessage('Hello World from FRC Web Components!');
@@ -29,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider("frc-web-components-no-project-opened", webviewView)
+		vscode.window.registerWebviewViewProvider("frc-web-components-no-dashboard-opened", webviewView)
 	);
 }
 
