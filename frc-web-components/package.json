@@ -14,7 +14,8 @@
 	],
 	"activationEvents": [
 		"onCommand:frc-web-components.helloWorld",
-		"onCommand:frc-web-components.showWebview"
+		"onCommand:frc-web-components.showWebview",
+		"onStartupFinished"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {

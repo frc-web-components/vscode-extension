@@ -3,7 +3,7 @@ import NoDashboardOpenedWebview from './webviews/NoDashboardOpenedWebview';
 
 export function activate(context: vscode.ExtensionContext) {
 
-	console.log('!!!');
+	console.log('Extension activated');
 
 	const noDashboardWebview = new NoDashboardOpenedWebview(context.extensionUri);
 

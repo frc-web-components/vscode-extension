@@ -26,7 +26,6 @@ export default abstract class CustomWebviewView implements vscode.WebviewViewPro
     }
 
     public resolveWebviewView(webviewView: vscode.WebviewView) {
-        console.log('resolve webview');
         this._webview = webviewView.webview;
         webviewView.webview.options = this._customWebview.getOptions();
         this._customWebview.setWebview(webviewView.webview);
