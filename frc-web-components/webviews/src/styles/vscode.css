@@ -84,3 +84,8 @@ input:not([type="checkbox"]), textarea {
 input::placeholder, textarea::placeholder {
     color: var(--vscode-input-placeholderForeground);
 }
+
+/* Additional Styles */
+p {
+    margin: 10px 0;
+}
