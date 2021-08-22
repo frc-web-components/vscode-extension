@@ -19,7 +19,11 @@ export default abstract class CustomWebviewView implements vscode.WebviewViewPro
         return this._extensionUri;
     }
 
-    public abstract onDidReceiveMessage(message : any) : any;
+    public abstract onCommand(command: string, data: any) : any;
+
+    public postCommand(command: string, data: any): void {
+        this.getWebview()?.postMessage({ command, data });
+    }
 
     public getWebview(): vscode.Webview | null {
         return this._webview;

@@ -19,7 +19,8 @@ export default class CustomWebview {
         this._webview.html = this._getWebviewContent();
         this._webview.onDidReceiveMessage(
             message => {
-                return this._webivewInterface.onDidReceiveMessage(message);
+                const { command, data } = message;
+                return this._webivewInterface.onCommand(command, data);
             },
             undefined,
             this._disposables
@@ -65,7 +66,7 @@ export default class CustomWebview {
                     content="default-src 'none'; img-src https:; script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:; style-src ${this._panel?.webview.cspSource} 'unsafe-inline';"
                 >
                 <script>
-                    window.acquireVsCodeApi = acquireVsCodeApi;
+                    window.vscode = acquireVsCodeApi();
                 </script>
             </head>
             <body>

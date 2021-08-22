@@ -21,10 +21,15 @@ export default abstract class CustomWebviewPanel implements IWebview {
         return this._extensionUri;
     }
 
-    public abstract onDidReceiveMessage(message : any) : any;
+    public abstract onCommand(command: string, data: any) : any;
+
 
     public getWebview(): vscode.Webview | null {
         return this._panel?.webview || null;
+    }
+
+    public postCommand(command: string, data: any): void {
+        this.getWebview()?.postMessage({ command, data });
     }
 
     public open(): void {

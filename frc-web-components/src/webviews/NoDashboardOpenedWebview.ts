@@ -9,7 +9,7 @@ export default class NoDashboardOpenedWebview extends CustomWebviewView {
          super(extensionUri);
     }
 
-    public onDidReceiveMessage(message : any) : any {
+    public onCommand(command: string, data: any) : any {
 
     }
 }

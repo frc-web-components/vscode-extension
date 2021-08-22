@@ -1,5 +1,6 @@
 import { html } from "lit";
 import createPageTemplate from '../create-page-template';
+import { onCommand } from "../vscodeApi";
 
 const renderPage = createPageTemplate(() => html`
     <style>
@@ -13,5 +14,8 @@ const renderPage = createPageTemplate(() => html`
     <button>Create New Dashboard</button>
 `);
 
-
 renderPage();
+
+onCommand('someCommand', data => {
+
+});
