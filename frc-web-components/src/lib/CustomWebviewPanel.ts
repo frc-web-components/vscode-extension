@@ -1,34 +1,30 @@
 import * as vscode from "vscode";
 import CustomWebview from "./CustomWebview";
+import IWebview from "./IWebview";
 
-export default class CustomWebviewPanel {
-    public readonly viewType: string;
-    public readonly title: string;
+export default abstract class CustomWebviewPanel implements IWebview {
+    public abstract readonly scriptName : string;
+    public abstract readonly title: string = 'View';
+    public abstract readonly viewType: string = 'view';
+
     private readonly _customWebview: CustomWebview;
-
     private _panel: vscode.WebviewPanel | null = null;
     private _disposables: vscode.Disposable[] = [];
+    private readonly _extensionUri : vscode.Uri;
 
-    public constructor(customWebview: CustomWebview, viewType: string = 'view', title: string = 'View') {
-        this._customWebview = customWebview;
-        this.viewType = viewType;
-        this.title = title;
+    public constructor(extensionUri : vscode.Uri) {
+        this._extensionUri = extensionUri;
+        this._customWebview = new CustomWebview(this);
     }
 
-    private _create(): void {
-        this._panel = vscode.window.createWebviewPanel(
-            this.viewType,
-            this.title,
-            vscode.ViewColumn.One,
-            this._customWebview.getOptions()
-        );
-
-        this._customWebview.setWebview(this._panel.webview);
-        this._panel.onDidDispose(() => this.close(), null, this._disposables);
+    public getExtensionUri(): vscode.Uri {
+        return this._extensionUri;
     }
 
-    public getWebview(): vscode.Webview | undefined {
-        return this._panel?.webview;
+    public abstract onDidReceiveMessage(message : any) : any;
+
+    public getWebview(): vscode.Webview | null {
+        return this._panel?.webview || null;
     }
 
     public open(): void {
@@ -45,5 +41,17 @@ export default class CustomWebviewPanel {
         this._customWebview.dispose();
         this._disposables.forEach(disposable => disposable.dispose());
         this._disposables = [];
+    }
+
+    private _create(): void {
+        this._panel = vscode.window.createWebviewPanel(
+            this.viewType,
+            this.title,
+            vscode.ViewColumn.One,
+            this._customWebview.getOptions()
+        );
+
+        this._customWebview.setWebview(this._panel.webview);
+        this._panel.onDidDispose(() => this.close(), null, this._disposables);
     }
 }

@@ -1,37 +1,30 @@
 import * as vscode from "vscode";
+import IWebview from "./IWebview";
 
-export default abstract class CustomWebview {
+export default class CustomWebview {
 
-    public readonly abstract scriptName : string;
-
-    private readonly _extensionUri: vscode.Uri;
+    private readonly _webivewInterface: IWebview;
     private _webview: vscode.Webview | null = null;
 
     private _panel: vscode.WebviewPanel | null = null;
     private _disposables: vscode.Disposable[] = [];
 
-    public constructor(extensionUri: vscode.Uri) {
-        this._extensionUri = extensionUri;
+    public constructor(_webivewInterface: IWebview) {
+        this._webivewInterface = _webivewInterface;
     }
 
-    public getExtensionUri(): vscode.Uri {
-        return this._extensionUri;
-    }
-
-    public setWebview(webview: vscode.Webview) {
+    public setWebview(webview : vscode.Webview) {
         this.dispose();
         this._webview = webview;
-        this._webview.html = this.getWebviewContent();
+        this._webview.html = this._getWebviewContent();
         this._webview.onDidReceiveMessage(
             message => {
-                return this.onDidReceiveMessage(message);
+                return this._webivewInterface.onDidReceiveMessage(message);
             },
             undefined,
             this._disposables
         );
     }
-
-    protected abstract onDidReceiveMessage(message : any) : any;
 
     public dispose(): void {
         this._webview = null;
@@ -39,21 +32,25 @@ export default abstract class CustomWebview {
         this._disposables = [];
     }
 
-    public getWebview(): vscode.Webview | null {
-        return this._webview;
-    }
-
     public getOptions() {
         return {
             enableScripts: true,
-            localResourceRoots: [vscode.Uri.joinPath(this.getExtensionUri(), "webviews/dist")]
+            localResourceRoots: [
+                vscode.Uri.joinPath(
+                    this._webivewInterface.getExtensionUri(), "webviews/dist"
+                )
+            ]
         };
     }
 
-    private getWebviewContent(): string {
+    private _getWebviewContent(): string {
 
         const scriptUrl = this._webview?.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, "webviews/dist", this.scriptName)
+            vscode.Uri.joinPath(
+                this._webivewInterface.getExtensionUri(), 
+                "webviews/dist", 
+                this._webivewInterface.scriptName
+            )
         );
 
         return `

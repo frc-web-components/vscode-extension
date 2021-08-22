@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import CustomWebview from "../lib/CustomWebview";
+import CustomWebviewView from "../lib/CustomWebviewView";
 
-export default class NoDashboardOpenedWebview extends CustomWebview {
+export default class NoDashboardOpenedWebview extends CustomWebviewView {
 
     public readonly scriptName = 'no-dashboard-opened.js';
 
@@ -9,7 +9,7 @@ export default class NoDashboardOpenedWebview extends CustomWebview {
          super(extensionUri);
     }
 
-    protected onDidReceiveMessage(message : any) : any {
+    public onDidReceiveMessage(message : any) : any {
 
     }
 }
