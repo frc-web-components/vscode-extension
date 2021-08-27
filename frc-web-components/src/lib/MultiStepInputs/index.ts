@@ -5,6 +5,29 @@ export default class MultiStepInputs {
 
     private inputSteps: InputStep[] = [];
     private currentStep: number = 0;
+    private readonly title: string;
+    private stepValues = new Map<InputStep, any>();
+
+    public constructor(title: string) {
+        this.title = title;
+    }
+
+    private addInputStep(inputStep: InputStep): void {
+        inputStep.setTitle(this.title);
+        inputStep.setStep(this.inputSteps.length + 1);
+        inputStep.onChange(() => {
+            if (inputStep.isValid()) {
+                this.stepValues.set(inputStep, inputStep.getValue());
+                this.goForwardStep();
+            }
+        });
+        inputStep.onDidTriggerButton(item => {
+            if (item === vscode.QuickInputButtons.Back) {
+                this.goBackStep();
+            }
+        });
+        this.inputSteps.push(inputStep);
+    }
 
     public addOpenDirectoryInput(placeholder: string, description: string): void {
 
@@ -45,6 +68,6 @@ export default class MultiStepInputs {
     }
 
     public hide(): void {
-        
+
     }
 };
