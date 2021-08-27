@@ -12,5 +12,7 @@ export default interface InputStep {
     hide(): void;
     onChange(listener: Function): void;
     onDidTriggerButton(listener: (e: QuickInputButton) => any): Disposable;
-    isValid(): boolean;
+    validate(): boolean;
+    setValue(value: any): void;
+    clearValue(): void;
 };
