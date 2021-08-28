@@ -15,6 +15,7 @@
 	"activationEvents": [
 		"onCommand:frc-web-components.helloWorld",
 		"onCommand:frc-web-components.showWebview",
+		"onCommand:frc-web-components.newDashboard",
 		"onStartupFinished"
 	],
 	"main": "./dist/extension.js",
@@ -27,6 +28,10 @@
 			{
 				"command": "frc-web-components.showWebview",
 				"title": "Show Webview"
+			},
+			{
+				"command": "frc-web-components.newDashboard",
+				"title": "Create a New Dashboard"
 			}
 		],
 		"viewsContainers": {

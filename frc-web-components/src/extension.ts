@@ -1,11 +1,14 @@
 import * as vscode from 'vscode';
 import NoDashboardOpenedWebview from './webviews/NoDashboardOpenedWebview';
+import MultiStepInputs from './lib/MultiStepInputs';
 
 export function activate(context: vscode.ExtensionContext) {
 
 	console.log('Extension activated');
 
 	const noDashboardWebview = new NoDashboardOpenedWebview(context.extensionUri);
+	const dashboardCreator = new MultiStepInputs('Create New Dashboard');
+	dashboardCreator.addTextInput('Dashboard Name', 'Enter a name for your dashboard');
 
 	let isDashboardOpened: boolean;
 
@@ -20,9 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from FRC Web Components!');
 	}));
 
-	// context.subscriptions.push(vscode.commands.registerCommand('frc-web-components.showWebview', () => {
-	// 	webviewPanel.open();
-	// }));
+	context.subscriptions.push(vscode.commands.registerCommand('frc-web-components.newDashboard', () => {
+		dashboardCreator.show();
+	}));
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider("frc-web-components-no-dashboard-opened", noDashboardWebview)
