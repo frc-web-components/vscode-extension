@@ -2,6 +2,11 @@ import { QuickInputButtons } from "vscode";
 import InputStep from "./InputStep";
 import TextInputStep from "./TextInputStep";
 
+type TextInputProps = {
+    placeholder?: string,
+    description?: string,
+};
+
 export default class MultiStepInputs {
 
     private inputSteps: InputStep[] = [];
@@ -46,7 +51,10 @@ export default class MultiStepInputs {
 
     }
 
-    public addTextInput(placeholder: string, description: string): void {
+    public addTextInput({
+        placeholder = '',
+        description = '',
+    }: TextInputProps = {}): void {
         const textInputStep = new TextInputStep();
         textInputStep.setPlaceholder(placeholder);
         textInputStep.setDescription(description);
