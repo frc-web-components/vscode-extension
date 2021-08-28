@@ -1,4 +1,4 @@
-import { QuickInputButton, Disposable, window, InputBox } from "vscode";
+import { QuickInputButton, QuickInputButtons, Disposable, window, InputBox } from "vscode";
 import InputStep from "./InputStep";
 
 export default class TextInputStep implements InputStep {
@@ -24,6 +24,7 @@ export default class TextInputStep implements InputStep {
         this.step = step;
         if (this.inputBox) {
             this.inputBox.step = step;
+            this.setInputButtons();
         }
     }
     setTotalSteps(stepCount: number): void {
@@ -71,6 +72,7 @@ export default class TextInputStep implements InputStep {
                 this.onDidTriggerButtonListener(e);
             }
         }));
+        this.setInputButtons();
     }
     hide(): void {
         this.inputBox?.dispose();
@@ -106,5 +108,11 @@ export default class TextInputStep implements InputStep {
 
     clearValue(): void {
         this.setValue('');
+    }
+
+    private setInputButtons() {
+        if (this.inputBox) {
+            this.inputBox.buttons = this.step > 1 ? [QuickInputButtons.Back] : [];
+        }
     }
 }

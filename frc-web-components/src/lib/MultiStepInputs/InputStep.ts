@@ -1,4 +1,4 @@
-import { QuickInputButton, Disposable } from "vscode";
+import { QuickInputButton } from "vscode";
 
 export default interface InputStep {
     setTitle(title: string): void;

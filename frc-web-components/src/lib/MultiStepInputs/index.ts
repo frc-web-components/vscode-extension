@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import { QuickInputButtons } from "vscode";
 import InputStep from "./InputStep";
 import TextInputStep from "./TextInputStep";
 
@@ -24,11 +24,14 @@ export default class MultiStepInputs {
             }
         });
         inputStep.onDidTriggerButton(item => {
-            if (item === vscode.QuickInputButtons.Back) {
+            if (item === QuickInputButtons.Back) {
                 this.goBackStep();
             }
         });
         this.inputSteps.push(inputStep);
+        this.inputSteps.forEach(step => {
+            step.setTotalSteps(this.inputSteps.length);
+        });
     }
 
     public addOpenDirectoryInput(placeholder: string, description: string): void {
