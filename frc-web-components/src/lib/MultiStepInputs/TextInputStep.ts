@@ -23,14 +23,14 @@ export default class TextInputStep implements InputStep {
     setStep(step: number): void {
         this.step = step;
         if (this.inputBox) {
-            this.inputBox.step = step;
+            this.inputBox.step = this.totalSteps > 1 ? step : undefined;
             this.setInputButtons();
         }
     }
     setTotalSteps(stepCount: number): void {
         this.totalSteps = stepCount;
         if (this.inputBox) {
-            this.inputBox.totalSteps = stepCount;
+            this.inputBox.totalSteps = stepCount > 1 ? stepCount : undefined;
         }
     }
     setPlaceholder(placeholder: string): void {
@@ -58,8 +58,10 @@ export default class TextInputStep implements InputStep {
         this.inputBox = window.createInputBox();;
         this.inputBox.show();
         this.inputBox.title = this.title;
-        this.inputBox.step = this.step;
-        this.inputBox.totalSteps = this.totalSteps;
+        if (this.totalSteps > 1) {
+            this.inputBox.step = this.step;
+            this.inputBox.totalSteps = this.totalSteps;
+        }
         this.inputBox.placeholder = this.placeholder;
         this.inputBox.prompt = this.description;
         this.disposables.push(this.inputBox.onDidChangeValue((e: string) => {
