@@ -6,11 +6,11 @@ export default interface InputStep {
     setTotalSteps(stepCount: number): void;
     setPlaceholder(placeholder: string): void;
     setDescription(description: string): void;
-    setRequired(): void;
     getValue(): any;
     show(): void;
     hide(): void;
     onChange(listener: Function): void;
+    onDidAccept(listener: Function): void;
     onDidTriggerButton(listener: (e: QuickInputButton) => any): void;
     validate(): boolean;
     setValue(value: any): void;

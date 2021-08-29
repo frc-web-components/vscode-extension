@@ -3,15 +3,16 @@ import InputStep from "./InputStep";
 
 export default class TextInputStep implements InputStep {
 
-    private inputBox: InputBox | undefined;
+    private inputBox?: InputBox;
     private title = '';
     private step = 1;
     private totalSteps = 1;
     private placeholder = '';
     private description = '';
     private isRequired = false;
-    private onChangeListener: Function | undefined;
-    private onDidTriggerButtonListener: ((e: QuickInputButton) => any) | undefined;
+    private onChangeListener?: Function;
+    private onDidAcceptListener?: Function;
+    private onDidTriggerButtonListener?: (e: QuickInputButton) => any;
     private disposables: Disposable[] = [];
 
     setTitle(title: string): void {
@@ -69,6 +70,11 @@ export default class TextInputStep implements InputStep {
                 this.onChangeListener();
             }
         }));
+        this.disposables.push(this.inputBox.onDidAccept((e: void) => {
+            if (this.onDidAcceptListener) {
+                this.onDidAcceptListener();
+            }
+        }));
         this.disposables.push(this.inputBox.onDidTriggerButton((e: QuickInputButton) => {
             if (this.onDidTriggerButtonListener) {
                 this.onDidTriggerButtonListener(e);
@@ -81,9 +87,15 @@ export default class TextInputStep implements InputStep {
         this.disposables.forEach(disposable => disposable.dispose());
         this.disposables = [];
     }
+
     onChange(listener: Function): void {
         this.onChangeListener = listener;
     }
+
+    onDidAccept(listener: Function): void {
+        this.onDidAcceptListener = listener;
+    }
+
     onDidTriggerButton(listener: (e: QuickInputButton) => any): void {
         this.onDidTriggerButtonListener = listener;
     }

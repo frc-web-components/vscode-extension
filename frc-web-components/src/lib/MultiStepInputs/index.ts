@@ -5,6 +5,7 @@ import TextInputStep from "./TextInputStep";
 type TextInputProps = {
     placeholder?: string,
     description?: string,
+    required?: boolean,
 };
 
 export default class MultiStepInputs {
@@ -23,6 +24,9 @@ export default class MultiStepInputs {
         inputStep.setStep(this.inputSteps.length + 1);
         this.stepValues.set(inputStep, inputStep.getValue());
         inputStep.onChange(() => {
+            inputStep.validate();
+        });
+        inputStep.onDidAccept(() => {
             if (inputStep.validate()) {
                 this.stepValues.set(inputStep, inputStep.getValue());
                 this.goForwardStep();
@@ -54,10 +58,14 @@ export default class MultiStepInputs {
     public addTextInput({
         placeholder = '',
         description = '',
+        required = false,
     }: TextInputProps = {}): void {
         const textInputStep = new TextInputStep();
         textInputStep.setPlaceholder(placeholder);
         textInputStep.setDescription(description);
+        if (required) {
+            textInputStep.setRequired();
+        }
         this.addInputStep(textInputStep);
     }
 

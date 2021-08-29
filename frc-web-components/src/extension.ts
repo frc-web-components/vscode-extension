@@ -11,6 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
 	dashboardCreator.addTextInput({
 		placeholder: 'Dashboard Name', 
 		description: 'Enter a name for your dashboard',
+		required: true,
 	});
 	dashboardCreator.addTextInput({
 		placeholder: 'wee'
