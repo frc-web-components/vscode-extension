@@ -8,13 +8,19 @@ type TextInputProps = {
     required?: boolean,
 };
 
+type InputUpdateListener = (inputId: string, value: any) => any;
+
+type InputSubmitListener = (inputValues: Map<string, any>) => any;
+
 export default class MultiStepInputs {
 
     private inputSteps: InputStep[] = [];
     private currentStep: number = 0;
     private readonly title: string;
-    private stepValues = new Map<InputStep, any>();
-
+    private onChangeListeners: InputUpdateListener[] = [];
+    private onDidAccept: InputUpdateListener[] = [];
+    private onSubmit: InputSubmitListener[] = [];
+    
     public constructor(title: string) {
         this.title = title;
     }
@@ -22,13 +28,11 @@ export default class MultiStepInputs {
     private addInputStep(inputStep: InputStep): void {
         inputStep.setTitle(this.title);
         inputStep.setStep(this.inputSteps.length + 1);
-        this.stepValues.set(inputStep, inputStep.getValue());
         inputStep.onChange(() => {
             inputStep.validate();
         });
         inputStep.onDidAccept(() => {
             if (inputStep.validate()) {
-                this.stepValues.set(inputStep, inputStep.getValue());
                 this.goForwardStep();
             }
         });
@@ -88,12 +92,9 @@ export default class MultiStepInputs {
         if (step >= this.inputSteps.length || step < 0) {
             return;
         }
-
         this.currentStep = step;
-        this.inputSteps[this.currentStep].show();
-        for (let i = this.currentStep + 1; i < this.inputSteps.length; i++) {
-            this.inputSteps[i].clearValue();
-        }
+        const inputStep = this.inputSteps[this.currentStep];
+        inputStep.show();
     }
 
     public show(): void {

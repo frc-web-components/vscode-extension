@@ -10,6 +10,7 @@ export default class TextInputStep implements InputStep {
     private placeholder = '';
     private description = '';
     private isRequired = false;
+    private value = '';
     private onChangeListener?: Function;
     private onDidAcceptListener?: Function;
     private onDidTriggerButtonListener?: (e: QuickInputButton) => any;
@@ -50,22 +51,24 @@ export default class TextInputStep implements InputStep {
         this.isRequired = true;
     }
     getValue() {
-        return this.inputBox?.value;
+        return this.value;
     }
     show(): void {
         if (this.inputBox) {
             this.inputBox.hide();
         }
-        this.inputBox = window.createInputBox();;
+        this.inputBox = window.createInputBox();
         this.inputBox.show();
         this.inputBox.title = this.title;
         if (this.totalSteps > 1) {
             this.inputBox.step = this.step;
             this.inputBox.totalSteps = this.totalSteps;
         }
+        this.inputBox.value = this.value;
         this.inputBox.placeholder = this.placeholder;
         this.inputBox.prompt = this.description;
         this.disposables.push(this.inputBox.onDidChangeValue((e: string) => {
+            this.value = this.inputBox?.value ?? '';
             if (this.onChangeListener) {
                 this.onChangeListener();
             }
@@ -115,6 +118,7 @@ export default class TextInputStep implements InputStep {
     }
 
     setValue(value: any): void {
+        this.value = value;
         if (this.inputBox) {
             this.inputBox.value = value;
         }
