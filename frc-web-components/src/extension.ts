@@ -9,13 +9,19 @@ export function activate(context: vscode.ExtensionContext) {
 	const noDashboardWebview = new NoDashboardOpenedWebview(context.extensionUri);
 	const dashboardCreator = new MultiStepInputs('Create New Dashboard');
 	dashboardCreator.addTextInput('dashboardName', {
-		placeholder: 'Dashboard Name', 
+		placeholder: 'Dashboard Name',
 		description: 'Enter a name for your dashboard',
 		required: true,
 	});
 
 	dashboardCreator.addTextInput('wee', {
 		placeholder: 'wee'
+	});
+
+	dashboardCreator.onSubmit(values => {
+		for (const [inputId, value] of values.entries()) {
+			console.log('on submit:', inputId, value);
+		}
 	});
 
 	let isDashboardOpened: boolean;

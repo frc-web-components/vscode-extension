@@ -23,8 +23,8 @@ export default class MultiStepInputs {
     private currentStep: number = 0;
     private readonly title: string;
     private onChangeListeners: InputUpdateListener[] = [];
-    private onDidAccept: InputUpdateListener[] = [];
-    private onSubmit: InputSubmitListener[] = [];
+    private onDidAcceptListeners: InputUpdateListener[] = [];
+    private onSubmitListeners: InputSubmitListener[] = [];
     
     public constructor(title: string) {
         this.title = title;
@@ -39,9 +39,13 @@ export default class MultiStepInputs {
         inputStep.setStep(this.inputSteps.length + 1);
         inputStep.onChange(() => {
             inputStep.validate();
+            const value = inputStep.getValue();
+            this.onChangeListeners.forEach(listener => listener(inputId, value));
         });
         inputStep.onDidAccept(() => {
             if (inputStep.validate()) {
+                const value = inputStep.getValue();
+                this.onDidAcceptListeners.forEach(listener => listener(inputId, value));
                 this.goForwardStep();
             }
         });
@@ -87,7 +91,13 @@ export default class MultiStepInputs {
     }
 
     public goForwardStep(): void {
-        this.goToStep(this.currentStep + 1);
+        if (this.currentStep === this.inputSteps.length - 1) {
+            const values = this.getValues();
+            this.onSubmitListeners.forEach(listener => listener(values));
+            this.hide();
+        } else {
+            this.goToStep(this.currentStep + 1);
+        }
     }
 
     public restart(): void {
@@ -114,6 +124,27 @@ export default class MultiStepInputs {
     public hide(): void {
         const { inputStep } = this.inputSteps[this.currentStep];
         inputStep.hide();
+    }
+
+    public onChange(listener: InputUpdateListener): void {
+        this.onChangeListeners.push(listener);
+    }
+
+    public onDidAccept(listener: InputUpdateListener): void {
+        this.onDidAcceptListeners.push(listener);
+    }
+
+    public onSubmit(listener: InputSubmitListener): void {
+        this.onSubmitListeners.push(listener);
+    }
+
+    public getValues(): Map<string, any> {
+        return new Map<string, any>(
+            this.inputSteps.map(({ inputId, inputStep }) => ([
+                inputId,
+                inputStep.getValue(),
+            ]))
+        );
     }
 
     private hasInputWithId(inputId: string): boolean {
