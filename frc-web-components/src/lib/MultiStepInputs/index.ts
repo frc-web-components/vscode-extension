@@ -12,9 +12,14 @@ type InputUpdateListener = (inputId: string, value: any) => any;
 
 type InputSubmitListener = (inputValues: Map<string, any>) => any;
 
+type InputWithId = {
+    inputId: string,
+    inputStep: InputStep,
+};
+
 export default class MultiStepInputs {
 
-    private inputSteps: InputStep[] = [];
+    private inputSteps: InputWithId[] = [];
     private currentStep: number = 0;
     private readonly title: string;
     private onChangeListeners: InputUpdateListener[] = [];
@@ -25,7 +30,11 @@ export default class MultiStepInputs {
         this.title = title;
     }
 
-    private addInputStep(inputStep: InputStep): void {
+    private addInputStep(inputId: string, inputStep: InputStep): void {
+        if (this.hasInputWithId(inputId)) {
+            throw new Error(`Cannot add duplicate input step ${inputId}`);
+        }
+
         inputStep.setTitle(this.title);
         inputStep.setStep(this.inputSteps.length + 1);
         inputStep.onChange(() => {
@@ -41,9 +50,9 @@ export default class MultiStepInputs {
                 this.goBackStep();
             }
         });
-        this.inputSteps.push(inputStep);
-        this.inputSteps.forEach(step => {
-            step.setTotalSteps(this.inputSteps.length);
+        this.inputSteps.push({ inputId, inputStep });
+        this.inputSteps.forEach(({ inputStep }) => {
+            inputStep.setTotalSteps(this.inputSteps.length);
         });
     }
 
@@ -59,7 +68,7 @@ export default class MultiStepInputs {
 
     }
 
-    public addTextInput({
+    public addTextInput(inputId: string, {
         placeholder = '',
         description = '',
         required = false,
@@ -70,7 +79,7 @@ export default class MultiStepInputs {
         if (required) {
             textInputStep.setRequired();
         }
-        this.addInputStep(textInputStep);
+        this.addInputStep(inputId, textInputStep);
     }
 
     public goBackStep(): void {
@@ -82,7 +91,7 @@ export default class MultiStepInputs {
     }
 
     public restart(): void {
-        for (let inputStep of this.inputSteps) {
+        for (let { inputStep } of this.inputSteps) {
             inputStep.clearValue();
         }
         this.goToStep(0);
@@ -93,15 +102,21 @@ export default class MultiStepInputs {
             return;
         }
         this.currentStep = step;
-        const inputStep = this.inputSteps[this.currentStep];
+        const { inputStep } = this.inputSteps[this.currentStep];
         inputStep.show();
     }
 
     public show(): void {
-        this.inputSteps[this.currentStep].show();
+        const { inputStep } = this.inputSteps[this.currentStep];
+        inputStep.show();
     }
 
     public hide(): void {
-        this.inputSteps[this.currentStep].hide();
+        const { inputStep } = this.inputSteps[this.currentStep];
+        inputStep.hide();
+    }
+
+    private hasInputWithId(inputId: string): boolean {
+        return this.inputSteps.findIndex(({ inputId: id }) => id === inputId) > -1;
     }
 };
