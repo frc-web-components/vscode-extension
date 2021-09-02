@@ -117,6 +117,7 @@ export default class MultiStepInputs {
     }
 
     public show(): void {
+        this.restart();
         const { inputStep } = this.inputSteps[this.currentStep];
         inputStep.show();
     }
