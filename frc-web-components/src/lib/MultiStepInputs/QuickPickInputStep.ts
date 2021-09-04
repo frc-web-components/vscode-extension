@@ -12,6 +12,7 @@ export default class QuickPickInputStep implements InputStep {
     private totalSteps = 1;
     private placeholder = '';
     private value: string[] = [];
+    private canSelectMany = false;
     private onChangeListener?: Function;
     private onDidAcceptListener?: Function;
     private onDidTriggerButtonListener?: (e: QuickInputButton) => any;
@@ -19,8 +20,19 @@ export default class QuickPickInputStep implements InputStep {
 
     setItems(items: QuickPickItemWithId[]) {
         this.items = items;
+        const defaultValue = this.items
+            .filter(({ picked }) => picked)
+            .map(({ id }) => id);
+        this.setValue(defaultValue);
         if (this.quickPick) {
             this.quickPick.items = items;
+        }
+    }
+
+    setCanSelectMany(canSelectMany: boolean): void {
+        this.canSelectMany = canSelectMany;
+        if (this.quickPick) {
+            this.quickPick.canSelectMany = canSelectMany;
         }
     }
 
@@ -69,13 +81,12 @@ export default class QuickPickInputStep implements InputStep {
             this.quickPick.step = this.step;
             this.quickPick.totalSteps = this.totalSteps;
         }
-        this.updateSelectedItems();
         this.quickPick.placeholder = this.placeholder;
         this.quickPick.items = this.items;
-        this.disposables.push(this.quickPick.onDidChangeValue((e: string) => {
-            if (this.quickPick) {
-                this.value = this.quickPick.selectedItems.map(item => (item as QuickPickItemWithId).id);
-            }
+        this.quickPick.canSelectMany = this.canSelectMany;
+        this.updateSelectedItems();
+        this.disposables.push(this.quickPick.onDidChangeSelection((items: readonly QuickPickItem[]) => {
+            this.value = items.map(item => (item as QuickPickItemWithId).id);
             if (this.onChangeListener) {
                 this.onChangeListener();
             }
@@ -120,7 +131,10 @@ export default class QuickPickInputStep implements InputStep {
     }
 
     clearValue(): void {
-        this.setValue([]);
+        const defaultValue = this.items
+            .filter(({ picked }) => picked)
+            .map(({ id }) => id);
+        this.setValue(defaultValue);
     }
 
     private setInputButtons() {
@@ -139,6 +153,15 @@ export default class QuickPickInputStep implements InputStep {
             })
             .filter(item => typeof item !== 'undefined')
             .map(item => item as QuickPickItemWithId);
-        this.quickPick.selectedItems = items;
+
+        if (!this.canSelectMany) {
+            this.quickPick.activeItems = items.length > 1 ? [items[0]] : items;
+        } else {
+            setTimeout(() => {
+                if (this.quickPick) {
+                    this.quickPick.selectedItems = items;
+                }
+            });
+        }
     }
 }

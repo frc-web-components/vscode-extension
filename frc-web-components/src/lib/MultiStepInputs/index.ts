@@ -75,7 +75,7 @@ export default class MultiStepInputs {
         placeholder = '',
         canSelectMany = false,
         items = [
-            { id: 'option1', label: 'Option 1', },
+            { id: 'option1', label: 'Option 1', picked: true },
             { id: 'option2', label: 'Option 2' },
         ]
     }: QuickInputProps = {}): void {

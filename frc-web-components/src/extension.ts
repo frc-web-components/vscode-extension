@@ -14,6 +14,16 @@ export function activate(context: vscode.ExtensionContext) {
 		required: true,
 	});
 
+	dashboardCreator.addQuickPickInput('quickPick', {
+		canSelectMany: false,
+		items: [
+			{ id: 'a', label: 'AA' },
+			{ id: 'b', label: 'BB', picked: true },
+			{ id: 'c', label: 'CC', picked: true }
+		]
+	});
+
+
 	dashboardCreator.addTextInput('wee', {
 		placeholder: 'wee'
 	});
