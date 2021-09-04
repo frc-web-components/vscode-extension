@@ -1,11 +1,18 @@
 import { QuickInputButtons } from "vscode";
 import InputStep from "./InputStep";
 import TextInputStep from "./TextInputStep";
+import QuickPickInputStep, { QuickPickItemWithId } from "./QuickPickInputStep";
 
 type TextInputProps = {
     placeholder?: string,
     description?: string,
     required?: boolean,
+};
+
+type QuickInputProps = {
+    placeholder?: string,
+    canSelectMany?: boolean,
+    items?: QuickPickItemWithId[]
 };
 
 type InputUpdateListener = (inputId: string, value: any) => any;
@@ -25,7 +32,7 @@ export default class MultiStepInputs {
     private onChangeListeners: InputUpdateListener[] = [];
     private onDidAcceptListeners: InputUpdateListener[] = [];
     private onSubmitListeners: InputSubmitListener[] = [];
-    
+
     public constructor(title: string) {
         this.title = title;
     }
@@ -64,12 +71,19 @@ export default class MultiStepInputs {
 
     }
 
-    public addQuickPickInput(options: string[], placeholder: string, description: string): void {
-
-    }
-
-    public addMultiQuickPickInput(options: string[], placeholder: string, description: string): void {
-
+    public addQuickPickInput(inputId: string, {
+        placeholder = '',
+        canSelectMany = false,
+        items = [
+            { id: 'option1', label: 'Option 1', },
+            { id: 'option2', label: 'Option 2' },
+        ]
+    }: QuickInputProps = {}): void {
+        const quickPickInputStep = new QuickPickInputStep();
+        quickPickInputStep.setPlaceholder(placeholder);
+        quickPickInputStep.setCanSelectMany(canSelectMany);
+        quickPickInputStep.setItems(items);
+        this.addInputStep(inputId, quickPickInputStep);
     }
 
     public addTextInput(inputId: string, {
