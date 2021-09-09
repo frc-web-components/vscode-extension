@@ -8,9 +8,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const noDashboardWebview = new NoDashboardOpenedWebview(context.extensionUri);
 	const dashboardCreator = new MultiStepInputs('Create New Dashboard');
+	
 	dashboardCreator.addTextInput('dashboardName', {
 		placeholder: 'Dashboard Name',
 		description: 'Enter a name for your dashboard',
+		required: true,
+	});
+	
+	dashboardCreator.addFileExplorerInputStep('dashboardFolder', {
+		placeholder: 'Dashboard Folder',
+		description: '',
 		required: true,
 	});
 

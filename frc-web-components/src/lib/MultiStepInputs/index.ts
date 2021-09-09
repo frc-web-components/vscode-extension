@@ -1,12 +1,21 @@
 import { QuickInputButtons } from "vscode";
 import InputStep from "./InputStep";
 import TextInputStep from "./TextInputStep";
+import FileExplorerInputStep from "./FileExplorerInputStep";
 import QuickPickInputStep, { QuickPickItemWithId } from "./QuickPickInputStep";
 
 type TextInputProps = {
     placeholder?: string,
     description?: string,
     required?: boolean,
+};
+
+type FileExplorerInputProps = {
+    placeholder?: string,
+    description?: string,
+    required?: boolean,
+    dialogTitle?: string,
+    dialogOpenLabel?: string,
 };
 
 type QuickInputProps = {
@@ -67,8 +76,22 @@ export default class MultiStepInputs {
         });
     }
 
-    public addOpenDirectoryInput(placeholder: string, description: string): void {
-
+    public addFileExplorerInputStep(inputId: string, {
+        placeholder = '',
+        description = '',
+        required = false,
+        dialogTitle = undefined,
+        dialogOpenLabel = undefined,
+    }: FileExplorerInputProps = {}): void {
+        const inputStep = new FileExplorerInputStep();
+        inputStep.setDialogTitle(dialogTitle);
+        inputStep.setDialogOpenLabel(dialogOpenLabel);
+        inputStep.setPlaceholder(placeholder);
+        inputStep.setDescription(description);
+        if (required) {
+            inputStep.setRequired();
+        }
+        this.addInputStep(inputId, inputStep);
     }
 
     public addQuickPickInput(inputId: string, {

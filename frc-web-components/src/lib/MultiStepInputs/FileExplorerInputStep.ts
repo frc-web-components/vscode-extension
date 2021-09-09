@@ -1,7 +1,14 @@
-import { QuickInputButton, QuickInputButtons, Disposable, window, InputBox } from "vscode";
+import {
+    QuickInputButton,
+    Disposable,
+    window,
+    InputBox,
+} from "vscode";
 import InputStep from "./InputStep";
+import { backButton, openFolderButton } from "./buttons";
+import { existsSync, lstatSync } from 'fs';
 
-export default class TextInputStep implements InputStep {
+export default class FileExplorerInputStep implements InputStep {
 
     private inputBox?: InputBox;
     private title = '';
@@ -15,6 +22,16 @@ export default class TextInputStep implements InputStep {
     private onDidAcceptListener?: Function;
     private onDidTriggerButtonListener?: (e: QuickInputButton) => any;
     private disposables: Disposable[] = [];
+    private dialogTitle?: string;
+    private dialogOpenLabel?: string;
+
+    setDialogTitle(title: string | undefined): void {
+        this.dialogTitle = title;
+    }
+
+    setDialogOpenLabel(label: string | undefined): void {
+        this.dialogOpenLabel = label;
+    }
 
     setTitle(title: string): void {
         this.title = title;
@@ -79,9 +96,12 @@ export default class TextInputStep implements InputStep {
                 this.onDidAcceptListener();
             }
         }));
-        this.disposables.push(this.inputBox.onDidTriggerButton((e: QuickInputButton) => {
+        this.disposables.push(this.inputBox.onDidTriggerButton((button: QuickInputButton) => {
+            if (button === openFolderButton) {
+                this.handleDialog();
+            }
             if (this.onDidTriggerButtonListener) {
-                this.onDidTriggerButtonListener(e);
+                this.onDidTriggerButtonListener(button);
             }
         }));
         this.setInputButtons();
@@ -114,6 +134,16 @@ export default class TextInputStep implements InputStep {
             return false;
         }
 
+        if (this.getValue() !== '' && !this.folderExists()) {
+            this.inputBox.validationMessage = 'The folder you have entered does not exist.';
+            return false;
+        }
+
+        if (this.getValue() !== '' && !this.pathIsFolder()) {
+            this.inputBox.validationMessage = 'The path you have entered is not a folder.';
+            return false;
+        }
+
         this.inputBox.validationMessage = '';
         return true;
     }
@@ -131,7 +161,34 @@ export default class TextInputStep implements InputStep {
 
     private setInputButtons() {
         if (this.inputBox) {
-            this.inputBox.buttons = this.step > 1 ? [QuickInputButtons.Back] : [];
+            this.inputBox.buttons = this.step > 1
+                ? [backButton, openFolderButton]
+                : [openFolderButton];
         }
+    }
+
+    private async handleDialog(): Promise<void> {
+        try {
+            const uris = await window.showOpenDialog({
+                canSelectMany: false,
+                canSelectFiles: false,
+                canSelectFolders: true,
+                title: this.dialogTitle,
+                openLabel: this.dialogOpenLabel,
+            });
+            if (typeof uris !== 'undefined') {
+                const [{ fsPath }] = uris;
+                this.setValue(fsPath);
+            }
+        } catch (error) { }
+        this.show();
+    }
+
+    private folderExists(): boolean {
+        return existsSync(this.value);
+    }
+
+    private pathIsFolder(): boolean {
+        return lstatSync(this.value).isDirectory(); 
     }
 }

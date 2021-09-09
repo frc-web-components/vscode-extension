@@ -75,6 +75,7 @@ export default class QuickPickInputStep implements InputStep {
             this.quickPick.hide();
         }
         this.quickPick = window.createQuickPick();
+        this.quickPick.ignoreFocusOut = true;
         this.quickPick.show();
         this.quickPick.title = this.title;
         if (this.totalSteps > 1) {
