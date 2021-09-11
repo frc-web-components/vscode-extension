@@ -7,7 +7,7 @@ export function activate(context: vscode.ExtensionContext) {
 	console.log('Extension activated');
 
 	const noDashboardWebview = new NoDashboardOpenedWebview(context.extensionUri);
-	const createDashboardForm = new CreateDashboardForm();
+	const createDashboardForm = CreateDashboardForm.getDashoardCreatorForm();
 	
 	let isDashboardOpened: boolean;
 

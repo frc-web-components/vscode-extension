@@ -3,8 +3,16 @@ import MultiStepInputs from "../lib/MultiStepInputs";
 export default class CreateDashboardForm {
 
     private readonly dashboardCreator;
+    private static dashboardCreatorForm?: CreateDashboardForm;
 
-    constructor() {
+    public static getDashoardCreatorForm() {
+        if (!CreateDashboardForm.dashboardCreatorForm) {
+            CreateDashboardForm.dashboardCreatorForm = new CreateDashboardForm();
+        }
+        return CreateDashboardForm.dashboardCreatorForm;
+    }
+
+    private constructor() {
         this.dashboardCreator = new MultiStepInputs('Create New Dashboard');
 
         this.dashboardCreator.addQuickPickInput('dashboardTemplate', {

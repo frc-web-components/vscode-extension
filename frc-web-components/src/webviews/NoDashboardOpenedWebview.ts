@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import CustomWebviewView from "../lib/CustomWebviewView";
+import CreateDashboardForm from "../quick-input/CreateDashboardForm";
 
 export default class NoDashboardOpenedWebview extends CustomWebviewView {
 
@@ -10,6 +11,8 @@ export default class NoDashboardOpenedWebview extends CustomWebviewView {
     }
 
     public onCommand(command: string, data: any) : any {
-
+        if (command === 'createNewDashboard') {
+            CreateDashboardForm.getDashoardCreatorForm().show();
+        }
     }
 }
