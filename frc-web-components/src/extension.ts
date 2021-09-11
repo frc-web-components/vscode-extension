@@ -1,46 +1,14 @@
 import * as vscode from 'vscode';
 import NoDashboardOpenedWebview from './webviews/NoDashboardOpenedWebview';
-import MultiStepInputs from './lib/MultiStepInputs';
+import CreateDashboardForm from './quick-input/CreateDashboardForm';
 
 export function activate(context: vscode.ExtensionContext) {
 
 	console.log('Extension activated');
 
 	const noDashboardWebview = new NoDashboardOpenedWebview(context.extensionUri);
-	const dashboardCreator = new MultiStepInputs('Create New Dashboard');
+	const createDashboardForm = new CreateDashboardForm();
 	
-	dashboardCreator.addTextInput('dashboardName', {
-		placeholder: 'Dashboard Name',
-		description: 'Enter a name for your dashboard',
-		required: true,
-	});
-	
-	dashboardCreator.addFileExplorerInputStep('dashboardFolder', {
-		placeholder: 'Dashboard Folder',
-		description: '',
-		required: true,
-	});
-
-	dashboardCreator.addQuickPickInput('quickPick', {
-		canSelectMany: false,
-		items: [
-			{ id: 'a', label: 'AA' },
-			{ id: 'b', label: 'BB', picked: true },
-			{ id: 'c', label: 'CC', picked: true }
-		]
-	});
-
-
-	dashboardCreator.addTextInput('wee', {
-		placeholder: 'wee'
-	});
-
-	dashboardCreator.onSubmit(values => {
-		for (const [inputId, value] of values.entries()) {
-			console.log('on submit:', inputId, value);
-		}
-	});
-
 	let isDashboardOpened: boolean;
 
 	const setDashboardOpened = (opened: boolean) => {
@@ -55,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('frc-web-components.newDashboard', () => {
-		dashboardCreator.show();
+		createDashboardForm.show();
 	}));
 
 	context.subscriptions.push(
