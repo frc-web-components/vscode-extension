@@ -1,6 +1,8 @@
 import { window, Uri, commands } from "vscode";
 import CustomWebviewView from "../lib/CustomWebviewView";
 import CreateDashboardForm from "../quick-input/CreateDashboardForm";
+import { existsSync, lstatSync } from 'fs';
+import { join } from 'path';
 
 const OPEN_DASHBOARD_DIALOG_ACTION = 'Open Dashboard';
 const OPEN_DASHBOARD_CURRENT_WINDOW_ACTION = 'Current Window';
@@ -11,10 +13,10 @@ export default class NoDashboardOpenedWebview extends CustomWebviewView {
     public readonly scriptName = 'no-dashboard-opened.js';
 
     public constructor(extensionUri: Uri) {
-         super(extensionUri);
+        super(extensionUri);
     }
 
-    public onCommand(command: string, data: any) : any {
+    public onCommand(command: string, data: any): any {
         if (command === 'createNewDashboard') {
             CreateDashboardForm.getDashoardCreatorForm().show();
         } else if (command === 'openDashboard') {
@@ -38,10 +40,10 @@ export default class NoDashboardOpenedWebview extends CustomWebviewView {
             }
         } else {
             const action = await window.showInformationMessage(
-                'Would you like to open the dashboard in the current or new window?', 
-                { modal: true }, 
-                OPEN_DASHBOARD_CURRENT_WINDOW_ACTION, 
-                OPEN_DASHBOARD_NEW_WINDOW_ACTION, 
+                'Would you like to open the dashboard in the current or new window?',
+                { modal: true },
+                OPEN_DASHBOARD_CURRENT_WINDOW_ACTION,
+                OPEN_DASHBOARD_NEW_WINDOW_ACTION,
             );
             if (action === OPEN_DASHBOARD_CURRENT_WINDOW_ACTION) {
                 await commands.executeCommand('vscode.openFolder', dashboardPath, false);
@@ -70,6 +72,10 @@ export default class NoDashboardOpenedWebview extends CustomWebviewView {
     }
 
     private isDashboard(path: string): boolean {
-        return true;
+        const dashboardSettingsFolder = join(path, '.frc-web-components');
+        if (!existsSync(dashboardSettingsFolder)) {
+            return false;
+        }
+        return lstatSync(dashboardSettingsFolder).isDirectory();
     }
 }
