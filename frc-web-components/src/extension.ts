@@ -1,33 +1,29 @@
-import * as vscode from 'vscode';
+import { commands, ExtensionContext, window } from 'vscode';
 import NoDashboardOpenedWebview from './webviews/NoDashboardOpenedWebview';
 import CreateDashboardForm from './quick-input/CreateDashboardForm';
+import WorkspaceDashboard from './WorkspaceDashboard';
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: ExtensionContext) {
 
 	console.log('Extension activated');
+
+	const workspaceDashboard = WorkspaceDashboard.getWorkspaceDashboard();
+
+	console.log('is dashboard opened:', workspaceDashboard.getIsDashboardOpened());
 
 	const noDashboardWebview = new NoDashboardOpenedWebview(context.extensionUri);
 	const createDashboardForm = CreateDashboardForm.getDashoardCreatorForm();
 	
-	let isDashboardOpened: boolean;
-
-	const setDashboardOpened = (opened: boolean) => {
-		isDashboardOpened = opened;
-		vscode.commands.executeCommand('setContext', 'frcWebComponents.isDashboardOpened', opened);
-	};
-
-	setDashboardOpened(false);
-
-	context.subscriptions.push(vscode.commands.registerCommand('frc-web-components.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from FRC Web Components!');
+	context.subscriptions.push(commands.registerCommand('frc-web-components.helloWorld', () => {
+		window.showInformationMessage('Hello World from FRC Web Components!');
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('frc-web-components.newDashboard', () => {
+	context.subscriptions.push(commands.registerCommand('frc-web-components.newDashboard', () => {
 		createDashboardForm.show();
 	}));
 
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider("frc-web-components-no-dashboard-opened", noDashboardWebview)
+		window.registerWebviewViewProvider("frc-web-components-no-dashboard-opened", noDashboardWebview)
 	);
 
 }

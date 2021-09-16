@@ -20,23 +20,23 @@ export default class CreateDashboardForm {
             canSelectMany: false,
             items: [
                 {
-                    id: 'emptyDashboard',
+                    id: 'empty-dashboard',
                     picked: true,
                     label: 'Empty Dashboard',
                     description: 'A bare-bones dashboard with only what you need to get started'
                 },
                 {
-                    id: 'gyroMecanum',
+                    id: 'gyro-mecanum',
                     label: 'Gyro Mecanum',
                     description: `A dashboard for the 'Gyro Mecanum' example progam showing how to perform mecanum drive with field oriented controls.`,
                 },
                 {
-                    id: 'gearsBot',
+                    id: 'gears-bot',
                     label: 'GearsBot',
                     description: `A dashboard for the 'Gearsbot' CommandBased example program for WPIs GearsBot robot, ported to the new CommandBased library. Also contains simulation components that work if the websocket simulation extension is running.`,
                 },
                 {
-                    id: 'simpleDifferentialDriveSimulation',
+                    id: 'simple-differential-drive-simulation',
                     label: 'Simple Differential Drive Simulation',
                     description: `A dashboard for the 'simpleDifferentialDriveSimulation' example, a minimal drivetrain simulation project without the command-based library.`,
                 },
