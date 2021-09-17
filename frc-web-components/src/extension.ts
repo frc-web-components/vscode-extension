@@ -7,6 +7,7 @@ export function activate(context: ExtensionContext) {
 
 	console.log('Extension activated');
 
+	WorkspaceDashboard.setExtensionContext(context);
 	const workspaceDashboard = WorkspaceDashboard.getWorkspaceDashboard();
 
 	console.log('is dashboard opened:', workspaceDashboard.getIsDashboardOpened());

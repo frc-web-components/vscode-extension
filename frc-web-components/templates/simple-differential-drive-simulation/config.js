@@ -1,0 +1,4 @@
+export default {
+    name: 'Simple Differential Drive Simulation',
+    description: `A dashboard for the 'simpleDifferentialDriveSimulation' example, a minimal drivetrain simulation project without the command-based library.`,
+};
