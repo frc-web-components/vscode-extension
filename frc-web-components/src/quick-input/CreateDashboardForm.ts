@@ -1,8 +1,11 @@
 import MultiStepInputs from "../lib/MultiStepInputs";
+import { QuickPickItemWithId } from "../lib/MultiStepInputs/QuickPickInputStep";
+import WorkspaceDashboard, { Template } from "../WorkspaceDashboard";
 
 export default class CreateDashboardForm {
 
     private readonly dashboardCreator;
+    private templates?: Map<string, Template>;
     private static dashboardCreatorForm?: CreateDashboardForm;
 
     public static getDashoardCreatorForm() {
@@ -13,34 +16,29 @@ export default class CreateDashboardForm {
     }
 
     private constructor() {
-        this.dashboardCreator = new MultiStepInputs('Create New Dashboard');
+        this.dashboardCreator = new MultiStepInputs('Create New Dashboard');        
+        this.onSubmit(() => {
+            this.createDashboard();
+        });
+    }
 
+    private async initForm() {
+        this.templates = await WorkspaceDashboard.getTemplates();
+        const templateItems: QuickPickItemWithId[] = [];
+        this.templates.forEach((template, id) => {
+            const { description, name, isDefault } = template.config;
+            templateItems.push({
+                id,
+                label: name,
+                description,
+                picked: isDefault,
+            });
+        });
+        
         this.dashboardCreator.addQuickPickInput('dashboardTemplate', {
             placeholder: "Select a dashboard template",
             canSelectMany: false,
-            items: [
-                {
-                    id: 'empty-dashboard',
-                    picked: true,
-                    label: 'Empty Dashboard',
-                    description: 'A bare-bones dashboard with only what you need to get started'
-                },
-                {
-                    id: 'gyro-mecanum',
-                    label: 'Gyro Mecanum',
-                    description: `A dashboard for the 'Gyro Mecanum' example progam showing how to perform mecanum drive with field oriented controls.`,
-                },
-                {
-                    id: 'gears-bot',
-                    label: 'GearsBot',
-                    description: `A dashboard for the 'Gearsbot' CommandBased example program for WPIs GearsBot robot, ported to the new CommandBased library. Also contains simulation components that work if the websocket simulation extension is running.`,
-                },
-                {
-                    id: 'simple-differential-drive-simulation',
-                    label: 'Simple Differential Drive Simulation',
-                    description: `A dashboard for the 'simpleDifferentialDriveSimulation' example, a minimal drivetrain simulation project without the command-based library.`,
-                },
-            ]
+            items: templateItems,
         });
 
         this.dashboardCreator.addFileExplorerInputStep('baseFolder', {
@@ -72,17 +70,16 @@ export default class CreateDashboardForm {
             placeholder: 'Team Number',
             required: true,
         });
-
-        this.onSubmit(() => {
-            this.createDashboard();
-        });
     }
 
     onSubmit(callback: (inputValues: Map<string, any>) => any) {
         this.dashboardCreator.onSubmit(callback);
     }
 
-    show() {
+    async show() {
+        if (typeof this.templates === 'undefined') {
+            await this.initForm();
+        }
         this.dashboardCreator.show();
     }
 
